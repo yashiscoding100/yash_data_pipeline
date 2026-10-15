@@ -1,5 +1,16 @@
 #!/usr/bin/env bash
-# Entrypoint for pipeline CLI on Linux / Raspberry Pi OS
+# Entrypoint for pipeline CLI on Linux, Raspberry Pi OS, and Git Bash
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 export PYTHONPATH="$DIR:$PYTHONPATH"
-exec python3 "$DIR/pipeline.py" "$@"
+
+# Choose working python binary (python3 or python)
+if command -v python3 >/dev/null 2>&1 && python3 --version >/dev/null 2>&1; then
+    exec python3 "$DIR/pipeline.py" "$@"
+elif command -v python >/dev/null 2>&1 && python --version >/dev/null 2>&1; then
+    exec python "$DIR/pipeline.py" "$@"
+elif [ -f "/c/Users/Yash/AppData/Local/Programs/Python/Python311/python.exe" ]; then
+    exec "/c/Users/Yash/AppData/Local/Programs/Python/Python311/python.exe" "$DIR/pipeline.py" "$@"
+else
+    echo "[ERROR] Python 3 not found in PATH." >&2
+    exit 1
+fi
