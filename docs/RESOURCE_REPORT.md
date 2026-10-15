@@ -1,4 +1,6 @@
 # Resource Usage Report (1-Hour Online Mode)
+**Benchmarked by:** Yash Saxena (`yash_data_pipeline`)  
+**Target Hardware:** Raspberry Pi 4 (ARM64, 4 Cores, 2 GB RAM)  
 
 This report details resource utilization on the target ARM64 Raspberry Pi-class environment running in continuous **online mode** for 1 hour (3,600 seconds), satisfying **Criterion 8**.
 

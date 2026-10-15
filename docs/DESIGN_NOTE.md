@@ -1,4 +1,6 @@
 # Design Note: Never Lose a Heartbeat Data Pipeline
+**Author:** Yash Saxena (`yash_data_pipeline`)  
+**Target Architecture:** ARM64 (Raspberry Pi 4) & Cloud  
 
 ## 1. Architecture Overview
 

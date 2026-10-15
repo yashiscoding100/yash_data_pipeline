@@ -1,4 +1,6 @@
-# Never Lose a Heartbeat — Resilient Bedside Data Pipeline
+# yash_data_pipeline — Never Lose a Heartbeat
+**Author:** Yash Saxena  
+**Repository / Package:** `yash_data_pipeline`  
 
 A zero-data-loss, crash-resilient medical telemetry data pipeline designed for ARM64 Raspberry Pi boards and free cloud services. Compliant with 100% of the Case Assessment requirements.
 
