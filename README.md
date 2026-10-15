@@ -28,8 +28,8 @@ A zero-data-loss, crash-resilient medical telemetry data pipeline designed for A
 ### 2. Installation
 Clone the repository and set executable permissions:
 ```bash
-git clone <your-repo-url> never-lose-a-heartbeat
-cd never-lose-a-heartbeat
+git clone https://github.com/yashiscoding100/yash_data_pipeline.git
+cd yash_data_pipeline
 chmod +x pipeline
 ```
 
