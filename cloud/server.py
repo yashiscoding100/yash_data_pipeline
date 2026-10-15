@@ -84,6 +84,50 @@ class CloudRequestHandler(BaseHTTPRequestHandler):
         path = parsed.path
         query = parse_qs(parsed.query)
 
+        if path in ("/", ""):
+            html = """<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Never Lose a Heartbeat — Cloud Service</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f172a; color: #f8fafc; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+    .card { background: #1e293b; border-radius: 12px; padding: 32px 40px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #334155; max-width: 500px; text-align: center; }
+    .status-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); padding: 6px 14px; border-radius: 9999px; font-size: 14px; font-weight: 600; margin-bottom: 20px; }
+    .dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 10px #22c55e; }
+    h1 { margin: 0 0 8px 0; font-size: 24px; color: #ffffff; }
+    p { color: #94a3b8; font-size: 15px; margin: 0 0 24px 0; }
+    .endpoints { text-align: left; background: #0f172a; border-radius: 8px; padding: 14px 18px; font-family: monospace; font-size: 13px; color: #cbd5e1; }
+    .endpoints a { color: #38bdf8; text-decoration: none; }
+    .endpoints a:hover { text-decoration: underline; }
+    .footer { margin-top: 20px; font-size: 12px; color: #64748b; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="status-badge"><span class="dot"></span> Cloud Backend Active</div>
+    <h1>yash_data_pipeline</h1>
+    <p>Never Lose a Heartbeat — Bedside Telemetry Service</p>
+    <div class="endpoints">
+      <div><b>API Endpoints:</b></div>
+      <div>• <a href="/api/health">/api/health</a> (Liveness probe)</div>
+      <div>• <a href="/api/status">/api/status</a> (Device & cloud stats)</div>
+      <div>• <code>POST /api/ingest</code> (Realtime & catch-up)</div>
+      <div>• <code>GET /api/export</code> (Session ground truth)</div>
+      <div>• <code>GET /api/results</code> (Section 3 window results)</div>
+    </div>
+    <div class="footer">Author: Yash Saxena • Free Cloud Tier (Render)</div>
+  </div>
+</body>
+</html>"""
+            body = html.encode('utf-8')
+            self.send_response(HTTPStatus.OK)
+            self.send_header('Content-Type', 'text/html; charset=utf-8')
+            self.send_header('Content-Length', str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
+
         if path == "/api/health":
             self.send_json_response({"status": "ok", "time": time.time()})
             return
