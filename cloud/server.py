@@ -89,34 +89,254 @@ class CloudRequestHandler(BaseHTTPRequestHandler):
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Never Lose a Heartbeat — Cloud Service</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Never Lose a Heartbeat — Medical Data Pipeline</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f172a; color: #f8fafc; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-    .card { background: #1e293b; border-radius: 12px; padding: 32px 40px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #334155; max-width: 500px; text-align: center; }
-    .status-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); padding: 6px 14px; border-radius: 9999px; font-size: 14px; font-weight: 600; margin-bottom: 20px; }
-    .dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 10px #22c55e; }
-    h1 { margin: 0 0 8px 0; font-size: 24px; color: #ffffff; }
-    p { color: #94a3b8; font-size: 15px; margin: 0 0 24px 0; }
-    .endpoints { text-align: left; background: #0f172a; border-radius: 8px; padding: 14px 18px; font-family: monospace; font-size: 13px; color: #cbd5e1; }
-    .endpoints a { color: #38bdf8; text-decoration: none; }
-    .endpoints a:hover { text-decoration: underline; }
-    .footer { margin-top: 20px; font-size: 12px; color: #64748b; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #eff6ff 100%);
+      color: #1e293b;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .container {
+      background: #ffffff;
+      border-radius: 24px;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.05), 0 0 1px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e2e8f0;
+      max-width: 640px;
+      width: 100%;
+      padding: 40px;
+      text-align: center;
+    }
+    .badge-wrapper {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #ecfdf5;
+      color: #059669;
+      border: 1px solid #a7f3d0;
+      padding: 6px 16px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+    .heart-icon-wrapper {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px;
+      height: 56px;
+      background: #ffe4e6;
+      border-radius: 16px;
+      margin: 0 auto 16px auto;
+      color: #e11d48;
+    }
+    h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+    .subtitle {
+      font-size: 15px;
+      color: #64748b;
+      margin-bottom: 28px;
+    }
+    .author-pill {
+      display: inline-block;
+      font-weight: 600;
+      color: #334155;
+      background: #f1f5f9;
+      padding: 3px 10px;
+      border-radius: 6px;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 28px;
+      text-align: left;
+    }
+    @media (max-width: 540px) {
+      .features-grid { grid-template-columns: 1fr; }
+    }
+    .feature-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 16px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .feature-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px -3px rgba(0, 0, 0, 0.05);
+    }
+    .feature-icon {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+    .feature-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 4px;
+    }
+    .feature-desc {
+      font-size: 12px;
+      color: #64748b;
+      line-height: 1.4;
+    }
+    .endpoints-section {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 20px;
+      text-align: left;
+      margin-bottom: 24px;
+    }
+    .endpoints-header {
+      font-size: 13px;
+      font-weight: 700;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .endpoint-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .endpoint-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 13px;
+      text-decoration: none;
+      color: #1e293b;
+      transition: all 0.2s;
+    }
+    .endpoint-item:hover {
+      border-color: #cbd5e1;
+      background: #f1f5f9;
+      transform: translateX(2px);
+    }
+    .endpoint-route {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-weight: 600;
+      color: #0284c7;
+    }
+    .endpoint-desc {
+      font-size: 12px;
+      color: #64748b;
+    }
+    .footer {
+      font-size: 12px;
+      color: #94a3b8;
+      line-height: 1.5;
+    }
   </style>
 </head>
 <body>
-  <div class="card">
-    <div class="status-badge"><span class="dot"></span> Cloud Backend Active</div>
-    <h1>yash_data_pipeline</h1>
-    <p>Never Lose a Heartbeat — Bedside Telemetry Service</p>
-    <div class="endpoints">
-      <div><b>API Endpoints:</b></div>
-      <div>• <a href="/api/health">/api/health</a> (Liveness probe)</div>
-      <div>• <a href="/api/status">/api/status</a> (Device & cloud stats)</div>
-      <div>• <code>POST /api/ingest</code> (Realtime & catch-up)</div>
-      <div>• <code>GET /api/export</code> (Session ground truth)</div>
-      <div>• <code>GET /api/results</code> (Section 3 window results)</div>
+  <div class="container">
+    <div class="heart-icon-wrapper">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+        <path d="M3.22 12H9.5l1.5-3 2 6 1.5-3h6.28"/>
+      </svg>
     </div>
-    <div class="footer">Author: Yash Saxena • Free Cloud Tier (Render)</div>
+    
+    <div class="badge-wrapper">
+      <div class="status-badge">
+        <span class="pulse-dot"></span>
+        Cloud Service Active & Healthy
+      </div>
+    </div>
+
+    <h1>Never Lose a Heartbeat</h1>
+    <p class="subtitle">Resilient Bedside Telemetry Pipeline &bull; by <span class="author-pill">Yash Saxena</span></p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🛡️</div>
+        <div class="feature-title">Zero Data Loss</div>
+        <div class="feature-desc">Atomic SQLite WAL commits safely survive sudden power pulls.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-title">Live Analysis</div>
+        <div class="feature-desc">1-second ECG windows processed in cloud within 2 seconds.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔄</div>
+        <div class="feature-title">Auto Catch-Up</div>
+        <div class="feature-desc">Seamless switch offline and rapid recovery upon Wi-Fi return.</div>
+      </div>
+    </div>
+
+    <div class="endpoints-section">
+      <div class="endpoints-header">
+        <span>🌐</span> Live Service Endpoints
+      </div>
+      <div class="endpoint-list">
+        <a href="/api/health" class="endpoint-item" target="_blank">
+          <span class="endpoint-route">GET /api/health</span>
+          <span class="endpoint-desc">Live connection check &rarr;</span>
+        </a>
+        <a href="/api/status" class="endpoint-item" target="_blank">
+          <span class="endpoint-route">GET /api/status</span>
+          <span class="endpoint-desc">Device telemetry status &rarr;</span>
+        </a>
+        <div class="endpoint-item">
+          <span class="endpoint-route">POST /api/ingest</span>
+          <span class="endpoint-desc">Live stream & catch-up ingest</span>
+        </div>
+        <div class="endpoint-item">
+          <span class="endpoint-route">GET /api/export</span>
+          <span class="endpoint-desc">Complete session ground truth</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      Designed for critical hospital environments where Wi-Fi drops and reliability matters.<br>
+      Host: Render Free Tier (Python 3) &bull; Author: Yash Saxena
+    </div>
   </div>
 </body>
 </html>"""
