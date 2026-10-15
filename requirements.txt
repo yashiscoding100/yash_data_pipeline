@@ -1,0 +1,7 @@
+# Never Lose a Heartbeat - Python Dependencies
+# The entire core system (pipeline CLI, device service, and cloud server)
+# relies solely on the Python 3.10+ standard library (sqlite3, asyncio, urllib, zlib).
+# Zero external packages are strictly required to install or run.
+
+# Optional development & testing utilities:
+# psutil>=5.9.0
